@@ -52,12 +52,13 @@
     background-color: #203745;
   }
   
+  
   .chat-input input {
     flex: 1;
     padding: 8px;
     color: white;
     margin-right: 10px;
-    background-color: #2379ae;
+    background-color: #a9ddfd;
   }
   
   .chat-input button {
