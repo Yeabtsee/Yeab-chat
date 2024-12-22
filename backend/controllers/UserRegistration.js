@@ -38,12 +38,12 @@ export const loginUser = async (req, res) => {
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    console.log(process.env.JWT_SECRET)
+    
     const JWT = process.env.JWT_SECRET||"Dinbi"
     const token = jwt.sign({ id: user._id }, JWT , {
       expiresIn: "1h",
     });
-    console.log(token)
+    
 
     res.json({ token });
   } catch (error) {

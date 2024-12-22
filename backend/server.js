@@ -5,8 +5,9 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import usersRoute from './routes/userRoutes.js '
-import {getConversations} from './controllers/search.js'
+import convRoute from './routes/convRoutes.js'
 import {getUsers} from './controllers/search.js'
+
 
 // Load environment variables
 dotenv.config();
@@ -89,7 +90,7 @@ io.on('connection', (socket) => {
 
 app.use('/api/users',usersRoute)
 app.use('/api/search/:username',getUsers)
-app.use('/api/conversations',getConversations)
+app.use('/api/conversations',convRoute)
 
 
 // Start server
