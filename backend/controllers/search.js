@@ -21,11 +21,13 @@ export const putConversations = async (req, res) => {
     const { userId, targetUserId, message } = req.body;
     try {
         const updatedMessage = { sender: userId, text: message, timestamp: new Date() };
+        console.log(userId, targetUserId, message)
         const conversation = await Conversation.findOneAndUpdate(
             { participants: { $all: [userId, targetUserId] } },
             { $push: { messages: updatedMessage } },
             { new: true, useFindAndModify: false }
         );
+        console.log(conversation)
         if (!conversation) return res.status(404).json({ message: 'Conversation not found' });
         else console.log('Message sent:', message); 
         res.json(conversation);

@@ -1,18 +1,33 @@
 import express from 'express'
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import multer from "multer";
 import { User } from "../models/User.js"; // Adjust the path to your User model
 import dotenv from 'dotenv';
 
 
 dotenv.config();
 
+// Multer setup for profile picture uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/avatars'); // Directory to store profile pictures
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
+
+
 export const registerUser= async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, email,fullName } = req.body;
   
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, password: hashedPassword });
+    const newUser = new User({ username, password: hashedPassword,email,fullName });
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully" });

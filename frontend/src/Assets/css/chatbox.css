@@ -211,6 +211,78 @@
   background-color: #4752c4;
 }
 
+/* Message Styling */
+.message {
+  max-width: auto;
+  padding: 3px;
+  border-radius: 18px;
+  font-size: 14px;
+  /* line-height: 1.5; */
+  margin-bottom: 10px;
+  word-wrap: break-word;
+  color: #ffffff;
+}
+
+/* Sent Messages */
+.message.sent {
+  background-color: #5865f2; /* Blue */
+  align-self: flex-end;
+}
+
+/* Received Messages */
+.message.received {
+  background-color: #4f545c; /* Dark Blue */
+  align-self: flex-start;
+}
+.user-avatar-container {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+}
+
+.profile-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(33, 30, 30);
+  padding: 20px;
+  border-radius: 5px;
+  overlay: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.profile-popup label {
+  margin: 10px 0;
+}
+
+.profile-popup button {
+  margin: 10px 5px;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .main-container {
