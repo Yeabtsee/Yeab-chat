@@ -1,24 +1,42 @@
 import express from 'express'
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import multer from "multer";
-import { User } from "../models/User.js"; // Adjust the path to your User model
+import { User } from "../models/User.js"; 
 import dotenv from 'dotenv';
 
 
 dotenv.config();
 
-// Multer setup for profile picture uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/avatars'); // Directory to store profile pictures
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
+// Endpoint to upload avatar
+export const updateAvatar = async (req, res) => {
+  const { username } = req.params;
+  const file = req.file;
 
-const upload = multer({ storage });
+  if (!file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  // Construct avatar URL
+  const avatarUrl = `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
+
+  try {
+    // Find the user and update the avatar field
+    const user = await User.findOneAndUpdate(
+      { username }, // Query to find the user by username
+      { avatar: avatarUrl }, // Update the avatar field
+      { new: true } // Return the updated user
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json({ avatarUrl });
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+    return res.status(500).json({ error: "Failed to update avatar" });
+  }
+};
 
 
 

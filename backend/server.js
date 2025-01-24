@@ -6,7 +6,15 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import usersRoute from './routes/userRoutes.js';
 import convRoute from './routes/convRoutes.js';
-import { getUsers } from './controllers/search.js';
+import { getUsers} from './controllers/search.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Load environment variables
 dotenv.config();
@@ -60,9 +68,9 @@ io.on('connection', (socket) => {
 
   // Handle private message
   socket.on('send_private_message', (data) => {
-    const { message, receiverUsername } = data;
+    const { message, receiverUsername,sender } = data;
     const receiverSocketId = users[receiverUsername];
-
+    console.log('Message received:', data);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit('receive_private_message', {
         message,
@@ -103,6 +111,12 @@ io.on('connection', (socket) => {
   });
 });
 
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ limit: '15mb', extended: true }));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
+// Routes
 app.use('/api/users', usersRoute);
 app.use('/api/search/:username', getUsers);
 app.use('/api/conversations', convRoute);

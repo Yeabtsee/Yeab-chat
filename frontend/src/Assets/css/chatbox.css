@@ -237,7 +237,7 @@
 .user-avatar-container {
   position: fixed;
   top: 10px;
-  left: 10px;
+  right: 10px;
   cursor: pointer;
 }
 
@@ -252,6 +252,8 @@
   position: fixed;
   top: 50%;
   left: 50%;
+  height: auto;
+  width: 400px;
   transform: translate(-50%, -50%);
   background-color: rgb(33, 30, 30);
   padding: 20px;
@@ -264,12 +266,29 @@
 .profile-content {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+}
+.profile-content input {
+  width: 90%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: #4f545c;
+  color: #ffffff;
+  margin-top: 10px;
+}
+.profile-content input::placeholder {
+  color: #b9bbbe;
+}
+.profile-content label {
+  margin: 10px 0px;
 }
 
 .profile-avatar {
-  width: 100px;
-  height: 100px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   margin-bottom: 20px;
 }
@@ -281,7 +300,33 @@
 .profile-popup button {
   margin: 10px 5px;
 }
-
+.profile-save-btn{
+  padding: 10px 20px;
+  background-color: #5865f2;
+  margin-top: 30px;
+  border: none;
+  border-radius: 5px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+.profile-save-btn:hover {
+  background-color: #4752c4;
+}
+.profile-close-btn{
+  padding: 10px 20px;
+  background-color: #f04747;
+  border: none;
+  border-radius: 5px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+.profile-close-btn:hover {
+  background-color: #d83c3e;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
