@@ -16,6 +16,7 @@ const ChatBox = ({ username, onLogout }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [profiles, setProfiles] = useState([]);
   const [userProfile, setUserProfile] = useState({
     avatar: "",
     email: "",
@@ -23,6 +24,11 @@ const ChatBox = ({ username, onLogout }) => {
   });
   const [unreadCounts, setUnreadCounts] = useState({});
   const [onlineUsers, setOnlineUsers] = useState({});
+  
+
+  const toggleProfilePopup = () => {
+    setIsProfileOpen(!isProfileOpen);
+  };
 
   // Fetch data & set up socket listeners
   useEffect(()=>{
@@ -37,6 +43,13 @@ const ChatBox = ({ username, onLogout }) => {
     };
     fetchUserProfile();
   },[username])
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/users/profiles')
+      .then((res) => res.json())
+      .then((data) => setProfiles(data))
+      .catch((err) => console.error('Error fetching users:', err));
+  }, []);
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -97,40 +110,9 @@ const ChatBox = ({ username, onLogout }) => {
   const handleCloseProfile = () => setIsProfileOpen(false);
 
   return (
-    <div className="main-container">
-      {/* Avatar trigger for profile popup */}
-      <div className="user-avatar-container" onClick={handleProfileClick}>
-      {userProfile.avatar ? (
-        <img
-          src={userProfile.avatar}
-          alt=""
-          className="profile-avatar"
-          onError={(e) => {
-            console.error("Debug: Avatar image failed to load:", userProfile.avatar);
-            e.target.src = ""; // Optionally set a default image
-          }}
-        />
-        
-      ) : (
-        <div
-          className="profile-avatar-letter"
-          style={{
-            width: "50px",
-            height: "50px",
-            borderRadius: "50%",
-            border: "1px solid #fff",
-            backgroundColor: "rgb(61, 117, 239)",
-            color: "#fff",
-            textAlign: "center",
-            lineHeight: "50px",
-            fontSize: "1.5rem",
-          }}
-        >
-          {username?.charAt(0).toUpperCase()}
-       </div>
-      )}
-      </div>
-
+    <>
+     <div  className={`overlay ${isProfileOpen ? "active" : ""}`}
+        onClick={toggleProfilePopup}></div>
       {/* Profile Popup */}
       {isProfileOpen && (
         <ProfilePopup
@@ -140,10 +122,14 @@ const ChatBox = ({ username, onLogout }) => {
           onClose={handleCloseProfile}
         />
       )}
-
+    <div className={`main-container ${isProfileOpen ? "blurred" : ""}`}>
       {/* Sidebar */}
       <Sidebar
         username={username}
+        profiles={profiles}
+        setProfiles={setProfiles}
+        isProfileOpen={isProfileOpen}
+        setIsProfileOpen={setIsProfileOpen}
         onlineUsers={onlineUsers}
         userProfile={userProfile}
         setUserProfile={setUserProfile}
@@ -172,6 +158,8 @@ const ChatBox = ({ username, onLogout }) => {
         setMessage={setMessage}
         messages={messages}
         setMessages={setMessages}
+        profiles={profiles}
+        setProfiles={setProfiles}
         users={users}
         setUsers={setUsers}
         selectedUser={selectedUser}
@@ -179,6 +167,7 @@ const ChatBox = ({ username, onLogout }) => {
         onLogout={onLogout}
       />
     </div>
+    </>
   );
 };
 

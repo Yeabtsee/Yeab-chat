@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect,useRef } from "react";
 import socket from "../socket";
 
 
@@ -8,12 +8,25 @@ const ChatArea = ({
   setMessage,
   messages,
   setMessages,
-  users,
+  profiles,
   setUsers,
   selectedUser,
   typingUser,
   onLogout,
 }) => {
+  const chatEndRef = useRef(null);
+
+  // Function to scroll to the last message
+  const scrollToBottom = () => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Trigger scrolling whenever messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
   const handleSendPrivateMessage = async () => {
     if (!message.trim() || !selectedUser?.participants) return;
     const targetUserId = selectedUser.participants.find((p) => p !== username);
@@ -98,13 +111,26 @@ const ChatArea = ({
 
   return (
     <div className="chat-area">
-      <div className="chat-header">
-        <h3>
-          {selectedUser
-            ? selectedUser.participants?.find((p) => p !== username) || "Select a user"
-            : "Select a user"}
-        </h3>
-      </div>
+       <div className="chat-header">
+        {selectedUser ? (
+          <>
+            <h3 className="username" style={{marginLeft:"45%"}}>
+              {selectedUser.participants.find((p) => p !== username)}
+            </h3>
+            <img
+              src={
+                profiles.find((profile) =>
+                  profile.username === selectedUser.participants.find((p) => p !== username)
+                )?.avatar
+              }
+              alt="User Avatar"
+              className="user-avatar"
+            />
+          </>
+        ) : (
+          <h3>Select a user</h3>
+        )}
+     </div>
 
       <div className="chat-messages">
         {messages.map((msg, idx) => (
@@ -117,6 +143,7 @@ const ChatArea = ({
           </div>
         ))}
         {typingUser && <div className="typing-status">{typingUser}</div>}
+        <div ref={chatEndRef} /> {/* Scroll here */} 
       </div>
 
       <div className="chat-input">

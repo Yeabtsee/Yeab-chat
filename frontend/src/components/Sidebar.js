@@ -6,6 +6,9 @@ const Sidebar = ({
   setUsers,
   selectedUser,
   onlineUsers,
+  userProfile,
+  profiles,
+  setIsProfileOpen,
   setUnreadCounts,
   setSelectedUser,
   setMessages,
@@ -16,9 +19,9 @@ const Sidebar = ({
   setSearchQuery,
   searchResult,
   setSearchResult,
-    newMessage,
+  newMessage,
 }) => {
-  const [profiles, setProfiles] = useState([]);
+  
 
   useEffect(() => {
     if (newMessage?.userId && newMessage.timestamp) {
@@ -61,16 +64,9 @@ const Sidebar = ({
   }, [users]); // Trigger when `users` changes
 
   
-  useEffect(() => {
-    fetch('http://localhost:5000/api/users/profiles') // Replace with your actual API endpoint
-      .then((res) => res.json())
-      .then((data) => setProfiles(data))
-      .catch((err) => console.error('Error fetching users:', err));
-  }, []);
+  
 
 
-
-  // console.log(profiles);
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (!query.trim()) {
@@ -131,10 +127,44 @@ const Sidebar = ({
       console.error("Error selecting user from search:", error);
     }
   };
-  
+  const handleProfileClick = () => setIsProfileOpen(true);
+  const handleCloseProfile = () => setIsProfileOpen(false);
 
   return (
     <div className="users-sidebar">
+      < div className="profile-container">
+      <div className="user-avatar-container" onClick={handleProfileClick}>
+      {userProfile.avatar ? (
+        <img
+          src={userProfile.avatar}
+          alt=""
+          className="profile-avatar"
+          onError={(e) => {
+            console.error("Debug: Avatar image failed to load:", userProfile.avatar);
+            e.target.src = ""; // Optionally set a default image
+          }}
+        />
+        
+      ) : (
+        <div
+          className="profile-avatar-letter"
+          style={{
+            width: "50px",
+            height: "50px",
+            borderRadius: "50%",
+            border: "1px solid #fff",
+            backgroundColor: "rgb(61, 117, 239)",
+            color: "#fff",
+            textAlign: "center",
+            lineHeight: "50px",
+            fontSize: "1.5rem",
+          }}
+        >
+          {username?.charAt(0).toUpperCase()}
+       </div>
+      )}
+      </div>
+
       <div className="search-bar">
         <input
           type="text"
@@ -143,7 +173,8 @@ const Sidebar = ({
           onChange={(e) => handleSearch(e.target.value)}
         />
       </div>
-
+      </div>
+      {console.log(searchResult)}
       {searchResult && searchResult.length > 0 && (
         <div className="search-results">
           {searchResult.
@@ -159,9 +190,9 @@ const Sidebar = ({
           ))}
         </div>
       )}
+      
 
       <div className="users-list">
-        {console.log(users)}
         {users.map((user) => {
           const otherParticipant = user.participants?.find((p) => p !== username);
           const unread = unreadCounts[otherParticipant] || 0;
