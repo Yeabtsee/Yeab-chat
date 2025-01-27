@@ -75,6 +75,8 @@ io.on('connection', (socket) => {
       io.to(receiverSocketId).emit('receive_private_message', {
         message,
         sender: data.sender,
+        timestamp: new Date(),
+
       });
       console.log('Message emitted to:', receiverSocketId);
     } else {

@@ -1,14 +1,16 @@
-import React,{useEffect} from "react";
+import React,{useEffect,useState} from "react";
 
 const Sidebar = ({
   username,
   users,
   setUsers,
   selectedUser,
+  onlineUsers,
+  setUnreadCounts,
   setSelectedUser,
   setMessages,
   setTypingUser,
-  searchedUser,
+  unreadCounts,
   setSearchedUser,
   searchQuery,
   setSearchQuery,
@@ -16,32 +18,59 @@ const Sidebar = ({
   setSearchResult,
     newMessage,
 }) => {
-    
-    useEffect(() => {
-        if (newMessage?.userId) {
-          console.log("Debug: newMessage received in Sidebar", newMessage);
-    
-          setUsers((prevUsers) =>
-            prevUsers.map((user) => {
-                console.log("Debug: user", user);
-                console.log("Debug: newMessage.userId", newMessage.userId);
-              if (newMessage.userId) { // Ensure this matches
-                console.log("Debug: updating user", user.username);
-                return {
-                  ...user,
-                  messages: [...(user.messages || []), newMessage],
-                };
-              }
-              return user;
-            })
-          );
-        }
-      }, [newMessage, setUsers]);
-      
-      useEffect(() => {
-        console.log("Debug: users updated in Sidebar", users);
-      }, [users]);
-    
+  const [profiles, setProfiles] = useState([]);
+
+  useEffect(() => {
+    if (newMessage?.userId && newMessage.timestamp) {
+      setUsers((prevUsers) => {
+        // Update user's messages
+        const updatedUsers = prevUsers.map((user) => {
+          if (user.participants?.includes(newMessage.userId)) {
+            return {
+              ...user,
+              messages: [...(user.messages || []), newMessage],
+            };
+          }
+          return user;
+        });
+  
+        // Create a new array before sorting to ensure reference change
+        const sortedUsers = [...updatedUsers].sort((a, b) => {
+          const aLast = a.messages?.[a.messages.length - 1]?.timestamp || 0;
+          const bLast = b.messages?.[b.messages.length - 1]?.timestamp || 0;
+          return new Date(bLast) - new Date(aLast);
+        });
+  
+        return sortedUsers;
+      });
+    }
+  }, [newMessage, setUsers]);
+
+  useEffect(() => {
+    // Sort users whenever the users array changes
+    const sortedUsers = [...users].sort((a, b) => {
+      const aLast = a.messages?.[a.messages.length - 1]?.timestamp || 0;
+      const bLast = b.messages?.[b.messages.length - 1]?.timestamp || 0;
+      return new Date(bLast) - new Date(aLast);
+    });
+  
+    // Update state only if the order changed
+    if (JSON.stringify(sortedUsers) !== JSON.stringify(users)) {
+      setUsers(sortedUsers);
+    }
+  }, [users]); // Trigger when `users` changes
+
+  
+  useEffect(() => {
+    fetch('http://localhost:5000/api/users/profiles') // Replace with your actual API endpoint
+      .then((res) => res.json())
+      .then((data) => setProfiles(data))
+      .catch((err) => console.error('Error fetching users:', err));
+  }, []);
+
+
+
+  // console.log(profiles);
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (!query.trim()) {
@@ -58,7 +87,16 @@ const Sidebar = ({
     }
   };
 
+  const resetUnreadCount = (username) => {
+    setUnreadCounts(prev => ({
+      ...prev,
+      [username]: 0,
+    }));
+  };
+  
   const handleSelectUser = (user) => {
+    const sender = user.participants.find(p => p !== username);
+    resetUnreadCount(sender);
     setSelectedUser(user);
     setMessages(user.messages || []);
     setTypingUser("");
@@ -71,6 +109,7 @@ const Sidebar = ({
         `http://localhost:5000/api/conversations/${username}/${user.username}`
       );
       const conversation = await response.json();
+      resetUnreadCount(user.username);
       if (!conversation) {
         setSelectedUser({ username: user.username, participants: [username, user.username], messages: [] });
         setSearchResult(null);
@@ -92,6 +131,7 @@ const Sidebar = ({
       console.error("Error selecting user from search:", error);
     }
   };
+  
 
   return (
     <div className="users-sidebar">
@@ -121,19 +161,42 @@ const Sidebar = ({
       )}
 
       <div className="users-list">
+        {console.log(users)}
         {users.map((user) => {
           const otherParticipant = user.participants?.find((p) => p !== username);
+          const unread = unreadCounts[otherParticipant] || 0;
+          const isOnline = onlineUsers[otherParticipant]; // Check if user is online
           return (
             <div
               key={user._id}
               className={`user-item ${
-                selectedUser?.username === otherParticipant ? "selected" : ""
+                selectedUser?.participants?.includes(otherParticipant) ? "selected" : ""
               }`}
               onClick={() => handleSelectUser(user)}
             >
-              <div className="user-avatar">
-                {otherParticipant?.charAt(0).toUpperCase()}
-              </div>
+                {profiles.map((profile) => {
+                  if (profile.username === otherParticipant) {
+                    return (
+                      <div className="avatar-container" key={profile.username}>
+                        {profile.avatar ? (
+                          <img
+                            className="profile-avatar"
+                            src={profile.avatar}
+                            alt=""
+                          />
+                        ) : (
+                          <span className="profile-avatar-letter">
+                            {otherParticipant[0].toUpperCase()}
+                          </span>
+                        )}
+                        {/* Online status indicator */}
+                        <span
+                          className={`status-indicator ${isOnline ? 'online' : 'offline'}`}
+                        ></span>
+                      </div>
+                    );
+                  }
+                })}
               <div className="user-info">
                 <span className="user-name">{otherParticipant}</span>
                 <br />
@@ -143,6 +206,10 @@ const Sidebar = ({
                   </span>
                 )}
               </div>
+              {unread > 0 && (
+                <span className="unread-badge">{unread}
+                </span>
+              )}
             </div>
           );
         })}

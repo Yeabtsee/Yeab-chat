@@ -21,6 +21,8 @@ const ChatBox = ({ username, onLogout }) => {
     email: "",
     fullName: "",
   });
+  const [unreadCounts, setUnreadCounts] = useState({});
+  const [onlineUsers, setOnlineUsers] = useState({});
 
   // Fetch data & set up socket listeners
   useEffect(()=>{
@@ -37,7 +39,6 @@ const ChatBox = ({ username, onLogout }) => {
   },[username])
 
   useEffect(() => {
-
     const fetchConversations = async () => {
       try {
         const response = await fetch(`http://localhost:5000/api/conversations/${username}`);
@@ -47,40 +48,49 @@ const ChatBox = ({ username, onLogout }) => {
         console.error("Error fetching conversations:", error);
       }
     };
-
-   
     fetchConversations();
 
     socket.on("receive_private_message", (data) => {
-      console.log("Debug: received data", data);
-      console.log("Debug: current selectedUser", selectedUser);
+        const sender = data.sender;
+        // Only increment if not viewing the conversation
+        if (!selectedUser?.participants?.includes(sender)) {
+          setUnreadCounts(prev => ({
+            ...prev,
+            [sender]: (prev[sender] || 0) + 1
+          }));
+        }
 
-      if (selectedUser?.participants?.includes(data.sender)) {
-        setMessages((prev) => [...prev, { sender: data.sender, text: data.message, type: "received" }]);
-        console.log("Debug: updated messages with new incoming message");
-      }
-       // Update newMessage so Sidebar can see it
-       console.log("Debug: setting newMessage");
-       console.log("Debug: data.sender", data.sender);
-        
-       setNewMessage({
-        userId: data.sender, 
-        text: data.message,
-
-        // add any other fields needed
+        if (selectedUser?.participants?.includes(data.sender)) {
+          setMessages((prev) => [...prev,
+            { 
+              sender: data.sender,
+              text: data.message,
+              type: "received",
+              timestamp: data.timestamp,
+            }]);
+            }
+        // Update newMessage so Sidebar can see it
+        setNewMessage({
+          userId: data.sender, 
+          text: data.message,
+          timestamp: data.timestamp,
+        });
       });
-      console.log("Debug: newMessage set to", newMessage);
-    });
 
+      socket.on('update_users', (users) => {
+        setOnlineUsers(users);
+      });  
     socket.on("display_typing", (senderUsername) => setTypingUser(`${senderUsername} is typing...`));
     socket.on("hide_typing", () => setTypingUser(""));
 
     return () => {
       socket.off("receive_private_message");
+      socket.off('update_users');
       socket.off("display_typing");
       socket.off("hide_typing");
     };
   }, [username, selectedUser]);
+
 
   // Profile popup toggles
   const handleProfileClick = () => setIsProfileOpen(true);
@@ -134,6 +144,11 @@ const ChatBox = ({ username, onLogout }) => {
       {/* Sidebar */}
       <Sidebar
         username={username}
+        onlineUsers={onlineUsers}
+        userProfile={userProfile}
+        setUserProfile={setUserProfile}
+        unreadCounts={unreadCounts}
+        setUnreadCounts={setUnreadCounts}
         users={users}
         setUsers={setUsers}
         selectedUser={selectedUser}

@@ -1,6 +1,6 @@
 import express from 'express';
 import { registerUser, loginUser, updateAvatar} from '../controllers/userController.js';
-import { updateUserProfile,getUserProfile } from '../controllers/search.js';
+import { updateUserProfile,getUserProfile, getAllProfiles } from '../controllers/search.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
@@ -40,6 +40,7 @@ const storage = multer.diskStorage({
 
 const router = express.Router();
 
+router.get('/profiles', getAllProfiles);
 router.post("/:username/upload-avatar", upload.single("avatar"), updateAvatar);
 router.put('/:username', updateUserProfile);
 router.get('/:username', getUserProfile);

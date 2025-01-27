@@ -117,3 +117,14 @@ export const updateUserProfile = async (req, res) => {
     }
 }
 
+export const getAllProfiles = async (req, res) => {
+    try {
+        const users = await User.find().select('_id username fullName email avatar');
+        res.json(users);
+    }
+    catch (error) {
+        console.error('Error fetching all profiles:', error);
+        res.status(500).json({ error: 'Error fetching all profiles' });
+    }
+}
+

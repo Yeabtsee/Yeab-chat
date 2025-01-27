@@ -73,6 +73,7 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   margin-bottom: 5px;
+  position: relative;
 }
 
 .user-item:hover {
@@ -85,9 +86,10 @@
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
+  border: 2px solid #ccc;
   background-color: #5865f2;
   display: flex;
   justify-content: center;
@@ -95,6 +97,7 @@
   color: #ffffff;
   font-weight: bold;
   margin-right: 10px;
+  position: relative;
 }
 
 .user-name {
@@ -156,6 +159,7 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   margin-bottom: 5px;
+  flex: 1;
 }
 .user-name{
   font-size: 16px;
@@ -241,15 +245,66 @@
   cursor: pointer;
 }
 
-.user-avatar {
-  width: 50px;
-  height: 50px;
+
+.unread-badge {
+  position: absolute;
+  right: 15px;
+  background-color: #ff1010;
+  color: white;
   border-radius: 50%;
-  border: 2px solid #ccc;
+  min-width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  padding: 2px;
+  border: 2px solid #ffc3c3;
 }
 
+/* Online Status Indicator */
+.status-indicator {
+  position: absolute;
+  bottom: 0;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.status-indicator.online {
+  background-color: #0af901; /* Green for online */
+}
+
+.status-indicator.offline {
+  background-color: #ccc; /* Gray for offline */
+}
+
+/* Avatar Container */
+.avatar-container {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin-right: 10px;
+}
+
+.profile-avatar-letter {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #5865f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+
 .profile-popup {
-  position: fixed;
+  position: relative;
   top: 50%;
   left: 50%;
   height: auto;
