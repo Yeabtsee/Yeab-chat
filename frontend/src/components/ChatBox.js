@@ -25,6 +25,15 @@ const ChatBox = ({ username, onLogout }) => {
   const [unreadCounts, setUnreadCounts] = useState({});
   const [onlineUsers, setOnlineUsers] = useState({});
   
+    // Mobile view state: if screen width <=760px, isMobile is true.
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 760);
+
+    // Listen for resize events to update isMobile
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth <= 760);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
   const toggleProfilePopup = () => {
     setIsProfileOpen(!isProfileOpen);
@@ -120,13 +129,16 @@ const ChatBox = ({ username, onLogout }) => {
           userProfile={userProfile}
           setUserProfile={setUserProfile}
           onClose={handleCloseProfile}
+          onLogout={onLogout}
         />
       )}
     <div className={`main-container ${isProfileOpen ? "blurred" : ""}`}>
       {/* Sidebar */}
+      {(!isMobile || (isMobile && !selectedUser)) && (
       <Sidebar
         username={username}
         profiles={profiles}
+        typingUser={typingUser}
         setProfiles={setProfiles}
         isProfileOpen={isProfileOpen}
         setIsProfileOpen={setIsProfileOpen}
@@ -148,10 +160,13 @@ const ChatBox = ({ username, onLogout }) => {
         searchResult={searchResult}
         setSearchResult={setSearchResult}
         newMessage={newMessage}
+        onLogout={onLogout}
 
       />
+      )}
 
-      {/* Chat Area */}
+      {/* Render ChatArea if not on mobile OR if mobile and conversation is selected */}
+      {(!isMobile || (isMobile && selectedUser)) && (
       <ChatArea
         username={username}
         message={message}
@@ -163,9 +178,11 @@ const ChatBox = ({ username, onLogout }) => {
         users={users}
         setUsers={setUsers}
         selectedUser={selectedUser}
+        setSelectedUser={setSelectedUser}
         typingUser={typingUser}
-        onLogout={onLogout}
+        isMobile={isMobile}
       />
+      )}
     </div>
     </>
   );

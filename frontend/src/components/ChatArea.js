@@ -1,4 +1,5 @@
 import React, { useEffect,useRef } from "react";
+
 import socket from "../socket";
 
 
@@ -11,8 +12,9 @@ const ChatArea = ({
   profiles,
   setUsers,
   selectedUser,
+  setSelectedUser,
   typingUser,
-  onLogout,
+  isMobile,
 }) => {
   const chatEndRef = useRef(null);
 
@@ -99,25 +101,63 @@ const ChatArea = ({
     }
   };
 
-  const handleTyping = () => {
-    if (selectedUser) {
-      socket.emit("start_typing", {
-        receiverSocketId: selectedUser.socketId,
-        senderUsername: username,
-      });
-      setTimeout(() => socket.emit("stop_typing", selectedUser), 2000);
-    }
-  };
+  // In the handleTyping function
+const handleTyping = () => {
+  if (selectedUser) {
+    const receiverUsername = selectedUser.participants.find((p) => p !== username);
+
+    socket.emit("start_typing", {
+      receiverUsername,
+      senderUsername: username,
+    });
+    setTimeout(() => socket.emit("stop_typing", receiverUsername), 5000); // Stop typing after 2 seconds
+  }
+};
 
   return (
     <div className="chat-area">
        <div className="chat-header">
+       {isMobile && selectedUser && (
+          <button
+            style={{
+                fontSize: "30px",
+                color: "white",
+                marginRight: "10px",
+                cursor: "pointer",
+                alignSelf: "center", 
+                backgroundColor: "rgb(86, 109, 222) ",
+                border: "none",
+                borderRadius: "10%",
+               }}
+            onClick={() => setSelectedUser(null)}
+          >
+            &lt; 
+          </button>
+        )}
         {selectedUser ? (
           <>
-            <h3 className="username" style={{marginLeft:"45%"}}>
+          <div style={{display:"flex",flexDirection:"column",marginLeft: isMobile ? "0" : "45%" }}>
+            <h3 className="username" style={{marginBottom:"2px"}}>
               {selectedUser.participants.find((p) => p !== username)}
             </h3>
-            <img
+            {
+            typingUser.split(" ")[0] === selectedUser.participants.find((p) => p !== username) ? 
+              <p
+                style={{
+                  alignSelf: "center",
+                  fontSize: "12px",
+                  color: "#999",
+                  marginTop: "0px",
+                }}
+              >
+                Typing...
+              </p>
+              : null}
+            </div>
+            {profiles.find((profile) =>
+                  profile.username === selectedUser.participants.find((p) => p !== username)
+                )?.avatar ? (
+                  <img
               src={
                 profiles.find((profile) =>
                   profile.username === selectedUser.participants.find((p) => p !== username)
@@ -125,7 +165,15 @@ const ChatArea = ({
               }
               alt="User Avatar"
               className="user-avatar"
-            />
+            /> 
+            ) : (
+              <span className="user-avatar">
+                {selectedUser.participants.find((p) => p !== username)[0].toUpperCase()}
+              </span>
+            )
+              
+            }
+            
           </>
         ) : (
           <h3>Select a user</h3>
@@ -142,7 +190,7 @@ const ChatArea = ({
             <p className="message-text">{msg.text}</p>
           </div>
         ))}
-        {typingUser && <div className="typing-status">{typingUser}</div>}
+        
         <div ref={chatEndRef} /> {/* Scroll here */} 
       </div>
 
@@ -165,10 +213,6 @@ const ChatArea = ({
           Send
         </button>
       </div>
-
-      <button className="logout-button" onClick={onLogout}>
-        Logout
-      </button>
     </div>
   );
 };
