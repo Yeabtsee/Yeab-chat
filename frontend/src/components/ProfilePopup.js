@@ -1,6 +1,6 @@
 import React from "react";
 
-const ProfilePopup = ({ username, userProfile, setUserProfile, onClose }) => {
+const ProfilePopup = ({ username, userProfile, setUserProfile, onClose,onLogout }) => {
   
   const handleProfileUpdate = async () => {
     console.log("Debug: updating profile", userProfile);
@@ -51,6 +51,9 @@ const ProfilePopup = ({ username, userProfile, setUserProfile, onClose }) => {
   return (
     <div className="profile-popup">
       <div className="profile-content">
+      <button className="close-profile" onClick={onClose}>
+          &times;
+        </button>
         <h2>User Profile</h2>
         {userProfile.avatar ? (
           <img
@@ -76,6 +79,7 @@ const ProfilePopup = ({ username, userProfile, setUserProfile, onClose }) => {
             {username?.charAt(0).toUpperCase()}
           </div>
         )}
+        
         <label>
           Full Name:
           <input
@@ -120,8 +124,12 @@ const ProfilePopup = ({ username, userProfile, setUserProfile, onClose }) => {
             }}
           />
         </label>
-        <button className="profile-save-btn" onClick={handleProfileUpdate}>Save Changes</button>
-        <button className="profile-close-btn" onClick={onClose}>Close</button>
+        <div style={{display:"flex",flexDirection:"column"}}>
+            <button className="profile-save-btn" onClick={handleProfileUpdate}>Save Changes</button>
+            <button className="logout-button" onClick={onLogout}>
+            Logout
+            </button>
+       </div>
       </div>
     </div>
   );

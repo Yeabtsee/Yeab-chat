@@ -20,6 +20,8 @@ const Sidebar = ({
   searchResult,
   setSearchResult,
   newMessage,
+  typingUser,
+  
 }) => {
   
 
@@ -174,7 +176,6 @@ const Sidebar = ({
         />
       </div>
       </div>
-      {console.log(searchResult)}
       {searchResult && searchResult.length > 0 && (
         <div className="search-results">
           {searchResult.
@@ -233,7 +234,9 @@ const Sidebar = ({
                 <br />
                 {user.messages.length > 0 && (
                   <span className="latest-message">
-                    {user.messages[user.messages.length - 1]?.text}
+                    {typingUser.split(" ")[0] === otherParticipant
+                      ? "Typing..."
+                      : user.messages[user.messages.length - 1]?.text}
                   </span>
                 )}
               </div>
