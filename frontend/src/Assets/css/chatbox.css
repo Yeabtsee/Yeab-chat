@@ -101,6 +101,7 @@
 
 .chat-header {
   padding: 15px;
+  margin-bottom: 15px;
   height: 70px;
   background-color: #202225;
   color: #ffffff;
@@ -119,25 +120,6 @@
   gap: 10px;
 }
 
-.message {
-  max-width: 60%;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.message.sent {
-  align-self: flex-end;
-  background-color: #5865f2;
-  color: #ffffff;
-}
-
-.message.received {
-  align-self: flex-start;
-  background-color: #4f545c;
-  color: #ffffff;
-}
 .user-info-ctn{
   display: flex;
   justify-content: space-between;
@@ -215,11 +197,11 @@
 
 /* Message Styling */
 .message {
-  max-width: auto;
-  padding: 3px;
+  max-width: 300px;
+  padding: 0 10px;
   border-radius: 18px;
   font-size: 14px;
-  /* line-height: 1.5; */
+  line-height: 1.5;
   margin-bottom: 10px;
   word-wrap: break-word;
   color: #ffffff;
@@ -229,15 +211,29 @@
 .message.sent {
   background-color: #5865f2; /* Blue */
   align-self: flex-end;
+  border-bottom-right-radius: 0;
 }
 
 /* Received Messages */
 .message.received {
   background-color: #4f545c; /* Dark Blue */
   align-self: flex-start;
+  border-bottom-left-radius: 0;
 }
+
+.message.sent .message-time{
+  font-size: 10px;
+  color: #dbdcde;
+  margin-left: auto;
+}
+.message.received .message-time{
+  font-size: 10px;
+  color: #dbdcde;
+  margin-right: auto;
+}
+
 .user-avatar-container {
-  margin: 10px 10px 0 10px;
+  margin: 3px 10px 0 10px;
   cursor: pointer;
 }
 
@@ -296,7 +292,7 @@
 }
 
 .status-indicator.offline {
-  background-color: #ccc; /* Gray for offline */
+  background-color: #bcbcbcce; /* Gray for offline */
 }
 
 /* Avatar Container */
@@ -455,5 +451,21 @@
   .chat-input{
     flex: none;
     height: auto;
+  }
+  .message{
+    max-width: 200px;
+  }
+  .user-avatar-container{
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  .user-info{
+    margin-left: -30%;
+  }
+ .latest-message{
+  max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

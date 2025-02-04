@@ -1,4 +1,6 @@
 import React, { useEffect,useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft, faPaperPlane } from '@fortawesome/free-solid-svg-icons'; // Change this line for different icons
 
 import socket from "../socket";
 
@@ -110,8 +112,14 @@ const handleTyping = () => {
       receiverUsername,
       senderUsername: username,
     });
-    setTimeout(() => socket.emit("stop_typing", receiverUsername), 5000); // Stop typing after 2 seconds
+    setTimeout(() => socket.emit("stop_typing", receiverUsername), 5000); 
   }
+};
+
+const currentDate = new Date().toDateString();
+const formatTimestamp = (timestamp) => {
+  const date = new Date(timestamp);
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
   return (
@@ -121,17 +129,17 @@ const handleTyping = () => {
           <button
             style={{
                 fontSize: "30px",
-                color: "white",
-                marginRight: "10px",
+                color: "rgb(86, 109, 222)",
+                marginLeft: "-5px",
                 cursor: "pointer",
                 alignSelf: "center", 
-                backgroundColor: "rgb(86, 109, 222) ",
+                backgroundColor: "transparent",
                 border: "none",
                 borderRadius: "10%",
                }}
             onClick={() => setSelectedUser(null)}
           >
-            &lt; 
+            <FontAwesomeIcon width="37px" icon={faChevronLeft} />
           </button>
         )}
         {selectedUser ? (
@@ -179,7 +187,17 @@ const handleTyping = () => {
           <h3>Select a user</h3>
         )}
      </div>
-
+     <div
+        className="date-divider"
+        style={{
+          textAlign: "center",
+          margin: "10px 0",
+          fontSize: "12px",
+          color: "#b9bbbe",
+        }}
+      >
+        {currentDate}
+      </div>
       <div className="chat-messages">
         {messages.map((msg, idx) => (
           <div
@@ -187,7 +205,12 @@ const handleTyping = () => {
             className={`message ${msg.sender === username ? "sent" : "received"}`}
             style={{ alignSelf: msg.sender === username ? "flex-end" : "flex-start" }}
           >
-            <p className="message-text">{msg.text}</p>
+            <p className="message-text" style={{marginBottom:"0px"}}>{msg.text}</p>
+            <span
+              className="message-time"
+            >
+              {formatTimestamp(msg.timestamp)}
+            </span>
           </div>
         ))}
         
@@ -210,7 +233,7 @@ const handleTyping = () => {
           disabled={!selectedUser}
         />
         <button onClick={handleSendPrivateMessage} disabled={!selectedUser}>
-          Send
+          <FontAwesomeIcon icon={faPaperPlane} />
         </button>
       </div>
     </div>
