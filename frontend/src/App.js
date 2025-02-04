@@ -26,7 +26,16 @@ const App = () => {
     localStorage.setItem("chat", username); // Save username in local storage
     socket.connect();
     socket.emit("user_join", username);
+    // Set a timeout to remove the saved item in local storage after 2 hours
+    setTimeout(() => {
+      localStorage.removeItem("chat");
+      setIsLoggedIn(false);
+      setUsername("");
+      socket.disconnect();
+    }, 2 * 60 * 60 * 1000); // 2 hours in milliseconds
   };
+
+
 
   const handleLogout = () => {
     localStorage.removeItem("chat"); // Clear the local storage

@@ -194,18 +194,21 @@ const Sidebar = ({
       
 
       <div className="users-list">
-        {users.map((user) => {
-          const otherParticipant = user.participants?.find((p) => p !== username);
-          const unread = unreadCounts[otherParticipant] || 0;
-          const isOnline = onlineUsers[otherParticipant]; // Check if user is online
-          return (
-            <div
-              key={user._id}
-              className={`user-item ${
-                selectedUser?.participants?.includes(otherParticipant) ? "selected" : ""
-              }`}
-              onClick={() => handleSelectUser(user)}
-            >
+        {users.length === 0 ? (
+          <p style={{textAlign:"center",fontSize:"25px", color:"rgb(83, 79, 79)"}}>No chats Yet!<br/> Please search for a user!</p>
+        ) : (
+          users.map((user) => {
+            const otherParticipant = user.participants?.find((p) => p !== username);
+            const unread = unreadCounts[otherParticipant] || 0;
+            const isOnline = onlineUsers[otherParticipant]; // Check if user is online
+            return (
+              <div
+                key={user._id}
+                className={`user-item ${
+                  selectedUser?.participants?.includes(otherParticipant) ? "selected" : ""
+                }`}
+                onClick={() => handleSelectUser(user)}
+              >
                 {profiles.map((profile) => {
                   if (profile.username === otherParticipant) {
                     return (
@@ -228,25 +231,26 @@ const Sidebar = ({
                       </div>
                     );
                   }
+                  return null;
                 })}
-              <div className="user-info">
-                <span className="user-name">{otherParticipant}</span>
-                <br />
-                {user.messages.length > 0 && (
-                  <span className="latest-message">
-                    {typingUser.split(" ")[0] === otherParticipant
-                      ? "Typing..."
-                      : user.messages[user.messages.length - 1]?.text}
-                  </span>
+                <div className="user-info">
+                  <span className="user-name">{otherParticipant}</span>
+                  <br />
+                  {user.messages.length > 0 && (
+                    <span className="latest-message">
+                      {typingUser.split(" ")[0] === otherParticipant
+                        ? "Typing..."
+                        : user.messages[user.messages.length - 1]?.text}
+                    </span>
+                  )}
+                </div>
+                {unread > 0 && (
+                  <span className="unread-badge">{unread}</span>
                 )}
               </div>
-              {unread > 0 && (
-                <span className="unread-badge">{unread}
-                </span>
-              )}
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );

@@ -45,6 +45,7 @@ const Login = ({ onLoginSuccess }) => {
   const [isRegister, setIsRegister] = useState(false); // Toggle between login and register
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [fullName, setFullName] = useState(""); // Add fullName state
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -75,7 +76,7 @@ const Login = ({ onLoginSuccess }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(
-          isRegister ? { username, password, email, fullName } : { username, password }
+          isRegister ? { username, password,phone, email, fullName } : { username, password }
         ),
       });
 
@@ -128,6 +129,13 @@ const Login = ({ onLoginSuccess }) => {
               placeholder="EMAIL"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              type="string"
+              placeholder="Phone Number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               required
             />
            <input
