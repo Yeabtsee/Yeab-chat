@@ -38,10 +38,10 @@ const App = () => {
 
 
   const handleLogout = () => {
-    localStorage.removeItem("chat"); // Clear the local storage
+    localStorage.removeItem("chat"); 
     setIsLoggedIn(false);
     setUsername("");
-    socket.disconnect(); // Disconnect socket
+    socket.disconnect(); 
   };
 
   return (
