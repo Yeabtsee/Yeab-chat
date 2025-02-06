@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const messageSchema = new mongoose.Schema({
     sender: { type: String, required: true },
     text: { type: String, required: true },
-    timestamp: { type: Date, default: Date.now }
+    timestamp: { type: Date, default: Date.now },
+    status: { type: String, default: "sent" } 
 });
 
 const conversationSchema = new mongoose.Schema({

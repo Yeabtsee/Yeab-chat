@@ -1,4 +1,5 @@
 import React,{useEffect,useState} from "react";
+import socket from "../socket";
 
 const Sidebar = ({
   username,
@@ -23,14 +24,20 @@ const Sidebar = ({
   typingUser,
   
 }) => {
+    // Initialize unreadCounts from localStorage if available
+    
   
+    // Persist unreadCounts to localStorage whenever they change
+    useEffect(() => {
+      localStorage.setItem("unreadCounts", JSON.stringify(unreadCounts));
+    }, [unreadCounts]);
 
   useEffect(() => {
-    if (newMessage?.userId && newMessage.timestamp) {
+    if (newMessage?.sender && newMessage.timestamp) {
       setUsers((prevUsers) => {
         // Update user's messages
         const updatedUsers = prevUsers.map((user) => {
-          if (user.participants?.includes(newMessage.userId)) {
+          if (user.participants?.includes(newMessage.sender)) {
             return {
               ...user,
               messages: [...(user.messages || []), newMessage],
@@ -99,6 +106,18 @@ const Sidebar = ({
     setMessages(user.messages || []);
     setTypingUser("");
     setSearchResult(null);
+
+     // Emit message_seen for all unseen messages
+  const unseenMessages = user.messages.filter(
+    (msg) => msg.sender !== username && msg.status==="sent"
+  );
+  unseenMessages.forEach((msg) => {
+    socket.emit("message_seen", {
+      sender: msg.sender,
+      timestamp: msg.timestamp,
+      receiver: username,
+    });
+  });
   };
 
   const handleSearchedSelectUser = async (user) => {

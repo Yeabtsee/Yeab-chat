@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import usersRoute from './routes/userRoutes.js';
 import convRoute from './routes/convRoutes.js';
 import { getUsers} from './controllers/search.js';
+import { Conversation } from "./models/Conversation.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -68,14 +69,14 @@ io.on('connection', (socket) => {
 
   // Handle private message
   socket.on('send_private_message', (data) => {
-    const { message, receiverUsername,sender } = data;
+    const { message, receiverUsername,sender,timestamp } = data;
     const receiverSocketId = users[receiverUsername];
     console.log('Message received:', data);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit('receive_private_message', {
         message,
         sender: data.sender,
-        timestamp: new Date(),
+        timestamp: timestamp,
 
       });
       console.log('Message emitted to:', receiverSocketId);
@@ -99,6 +100,52 @@ io.on('connection', (socket) => {
       io.to(receiverSocketId).emit('hide_typing');
     }
   });
+  socket.on("message_seen", async (data) => {
+    const { sender, timestamp, receiver } = data;
+    console.log("Message seen request received:", data);
+
+    try {
+        const formattedTimestamp = new Date(timestamp);
+
+        // Define a small time range (±100ms) to account for minor differences
+        const timeMargin = 100; // Adjust if needed
+        const minTimestamp = new Date(formattedTimestamp.getTime() - timeMargin);
+        const maxTimestamp = new Date(formattedTimestamp.getTime() + timeMargin);
+
+        console.log("Searching for messages with timestamp between:", minTimestamp, "and", maxTimestamp);
+
+        // Update messages within this time range
+        const result = await Conversation.updateOne(
+            { 
+                participants: { $all: [sender, receiver] },
+                "messages.timestamp": { $gte: minTimestamp, $lte: maxTimestamp } // Allow timestamp variation
+            },
+            { $set: { "messages.$.status": "seen" } }
+        );
+
+        if (result.modifiedCount === 0) {
+            console.error("No message was updated. Timestamp mismatch still exists.");
+            return;
+        }
+
+        console.log(`Updated ${result.modifiedCount} message(s) to 'seen'.`);
+
+        const senderSocketId = users[sender];
+
+        if (senderSocketId) {
+            io.to(senderSocketId).emit("update_message_status", {
+                timestamp,
+                status: "seen",
+                receiver,
+            });
+        }
+      
+    } catch (error) {
+        console.error("Error updating message status:", error);
+    }
+});
+
+  
 
   // Handle disconnection
   socket.on('disconnect', () => {

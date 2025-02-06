@@ -22,15 +22,18 @@ const ChatBox = ({ username, onLogout }) => {
     email: "",
     fullName: "",
   });
-  const [unreadCounts, setUnreadCounts] = useState({});
-  const [onlineUsers, setOnlineUsers] = useState({});
+  const [unreadCounts, setUnreadCounts] = useState(() => {
+    const stored = localStorage.getItem("unreadCounts");
+    return stored ? JSON.parse(stored) : {};
+  });
+    const [onlineUsers, setOnlineUsers] = useState({});
   
     // Mobile view state: if screen width <=760px, isMobile is true.
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 760);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 770);
 
     // Listen for resize events to update isMobile
     useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth <= 760);
+      const handleResize = () => setIsMobile(window.innerWidth <= 770);
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }, []);
@@ -89,13 +92,16 @@ const ChatBox = ({ username, onLogout }) => {
               text: data.message,
               type: "received",
               timestamp: data.timestamp,
+              status: "sent",
             }]);
             }
         // Update newMessage so Sidebar can see it
         setNewMessage({
-          userId: data.sender, 
+          sender: data.sender, 
           text: data.message,
+          type: "received",
           timestamp: data.timestamp,
+          status: "sent",
         });
       });
 

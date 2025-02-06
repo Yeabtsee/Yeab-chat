@@ -31,6 +31,7 @@ const ChatArea = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
   const handleSendPrivateMessage = async () => {
     if (!message.trim() || !selectedUser?.participants) return;
     const targetUserId = selectedUser.participants.find((p) => p !== username);
@@ -41,6 +42,7 @@ const ChatArea = ({
       text: message.trim(),
       timestamp: new Date().toISOString(), // Use ISO string for consistency
       type: "sent",
+      status: "sent", // Optimistic update
     };
   
     try {
@@ -115,12 +117,94 @@ const handleTyping = () => {
     setTimeout(() => socket.emit("stop_typing", receiverUsername), 5000); 
   }
 };
+useEffect(() => {
+  if (selectedUser) {
+    console.log("messages:", messages);
+    const unseenMessages = messages.filter(
+      (msg) => msg.sender !== username && msg.status === "sent"
+    );
+    console.log("Unseen messages:", unseenMessages);
+    if (unseenMessages.length > 0) {
+      unseenMessages.forEach((msg) => {
+        console.log("Emitting message_seen for:", msg);
+        socket.emit("message_seen", {
+          sender: msg.sender,
+          timestamp: msg.timestamp,
+          receiver: username,
+        });
+      });
+      // Update local state to prevent infinite emissions
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.sender !== username && msg.status === "sent"
+            ? { ...msg, status: "pending" } // mark as pending
+            : msg
+        )
+      );
+     
+    
+    }
+ 
+  }
+}, [selectedUser,messages,username]);
 
-const currentDate = new Date().toDateString();
+
+
+// Update the status listener with proper timestamp comparison
+useEffect(() => {
+  const handleStatusUpdate = (data) => {
+    setMessages(prev => prev.map(msg => 
+      msg.timestamp === data.timestamp && 
+      msg.sender === username ? 
+        {...msg, status: data.status} : 
+        msg
+    ));
+  };
+
+  socket.on("update_message_status", handleStatusUpdate);
+  return () => socket.off("update_message_status", handleStatusUpdate);
+}, [username]);
+
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
+
+
+// Build message elements with date separators
+let lastDate = null;
+const messageElements = messages.map((msg, idx) => {
+  const msgDate = new Date(msg.timestamp).toDateString();
+  let divider = null;
+  if (msgDate !== lastDate) {
+    divider = (
+      <div key={`divider-${idx}`} className="date-divider" style={{ textAlign: "center", margin: "10px 0", fontSize: "12px", color: "#b9bbbe" }}>
+        {msgDate}
+      </div>
+    );
+    lastDate = msgDate;
+  }
+  return (
+    <React.Fragment key={idx}>
+      {divider}
+      <div
+        className={`message ${msg.sender === username ? "sent" : "received"}`}
+        style={{ alignSelf: msg.sender === username ? "flex-end" : "flex-start" }}
+      >
+        <p className="message-text" style={{ margin: "8px 0 0 0" }}>{msg.text}</p>
+        <span className="message-time">
+          {formatTimestamp(msg.timestamp)}
+          {msg.sender === username && (
+            <span className="message-status" style={{ marginLeft: "5px", fontSize: "10px", color: "#b9bbbe" }}>
+              {msg.status === "seen" ? "✓✓" : "✓"}
+            </span>
+          )}
+        </span>
+      </div>
+    </React.Fragment>
+  );
+});
+
 
   return (
     <div className="chat-area">
@@ -178,43 +262,16 @@ const formatTimestamp = (timestamp) => {
               <span className="user-avatar">
                 {selectedUser.participants.find((p) => p !== username)[0].toUpperCase()}
               </span>
-            )
-              
+            ) 
             }
-            
           </>
         ) : (
-          <h3>Select a user</h3>
+          <h3 style={{marginLeft:"45%"}}>Select a user</h3>
         )}
      </div>
-     <div
-        className="date-divider"
-        style={{
-          textAlign: "center",
-          margin: "10px 0",
-          fontSize: "12px",
-          color: "#b9bbbe",
-        }}
-      >
-        {currentDate}
-      </div>
-      <div className="chat-messages">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`message ${msg.sender === username ? "sent" : "received"}`}
-            style={{ alignSelf: msg.sender === username ? "flex-end" : "flex-start" }}
-          >
-            <p className="message-text" style={{marginBottom:"0px"}}>{msg.text}</p>
-            <span
-              className="message-time"
-            >
-              {formatTimestamp(msg.timestamp)}
-            </span>
-          </div>
-        ))}
-        
-        <div ref={chatEndRef} /> {/* Scroll here */} 
+     <div className="chat-messages">
+        {messageElements}
+        <div ref={chatEndRef} />
       </div>
 
       <div className="chat-input">
