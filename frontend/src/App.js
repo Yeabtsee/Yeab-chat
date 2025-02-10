@@ -35,20 +35,31 @@ const App = () => {
     }, 2 * 60 * 60 * 1000); // 2 hours in milliseconds
   };
 
-
-
   const handleLogout = () => {
-    localStorage.removeItem("chat"); 
+    localStorage.removeItem("chat");
     setIsLoggedIn(false);
     setUsername("");
-    socket.disconnect(); 
+    socket.disconnect();
   };
 
   return (
     <Router>
       <Routes>
+        {/* Root route redirects to chat if logged in, or to login preserving query params */}
         <Route
           path="/"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/chat" />
+            ) : (
+              <Navigate to={`/login${window.location.search}`} />
+            )
+          }
+        />
+
+        {/* Explicit login route */}
+        <Route
+          path="/login"
           element={
             isLoggedIn ? (
               <Navigate to="/chat" />
@@ -57,17 +68,22 @@ const App = () => {
             )
           }
         />
+
+
+        {/* Chat route */}
         <Route
           path="/chat"
           element={
             isLoggedIn ? (
               <ChatBox username={username} onLogout={handleLogout} />
             ) : (
-              <Navigate to="/" />
+              <Navigate to="/login" />
             )
           }
         />
-        <Route path="*" element={<Navigate to="/" />} />
+
+        {/* Wildcard route - preserve query parameters when redirecting */}
+        <Route path="*" element={<Navigate to={`/login${window.location.search}`} />} />
       </Routes>
     </Router>
   );

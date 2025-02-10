@@ -257,6 +257,7 @@ const messageElements = messages.map((msg, idx) => {
               }
               alt="User Avatar"
               className="user-avatar"
+              style={{backgroundColor: "transparent"}}  
             /> 
             ) : (
               <span className="user-avatar">
