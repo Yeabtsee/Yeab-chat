@@ -1,15 +1,23 @@
 import React from "react";
 
-const ProfilePopup = ({ username, userProfile, setUserProfile, onClose,onLogout }) => {
-  
+const ProfilePopup = ({
+  username,
+  userProfile,
+  setUserProfile,
+  onClose,
+  onLogout,
+}) => {
   const handleProfileUpdate = async () => {
     console.log("Debug: updating profile", userProfile);
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${username}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userProfile),
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/users/${username}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userProfile),
+        }
+      );
       if (response.ok) {
         const updatedData = await response.json();
         setUserProfile(updatedData);
@@ -30,11 +38,13 @@ const ProfilePopup = ({ username, userProfile, setUserProfile, onClose,onLogout 
     console.log("Debug: Uploading avatar", file);
     console.log("Debug: Form data", formData);
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${username}/upload-avatar`, {
-        method: "POST",
-        body: formData,
-      });
-
+      const response = await fetch(
+        `http://localhost:5000/api/users/${username}/upload-avatar`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -51,7 +61,7 @@ const ProfilePopup = ({ username, userProfile, setUserProfile, onClose,onLogout 
   return (
     <div className="profile-popup">
       <div className="profile-content">
-      <button className="close-profile" onClick={onClose}>
+        <button className="close-profile" onClick={onClose}>
           &times;
         </button>
         <h2>User Profile</h2>
@@ -79,7 +89,7 @@ const ProfilePopup = ({ username, userProfile, setUserProfile, onClose,onLogout 
             {username?.charAt(0).toUpperCase()}
           </div>
         )}
-        
+
         <label>
           Full Name:
           <input
@@ -115,7 +125,7 @@ const ProfilePopup = ({ username, userProfile, setUserProfile, onClose,onLogout 
           <input
             type="file"
             accept="image/*"
-            style={{ marginLeft:"10%",marginTop:"10px" }}
+            style={{ marginLeft: "10%", marginTop: "10px" }}
             onChange={(e) => {
               const file = e.target.files[0];
               if (file) {
@@ -124,12 +134,14 @@ const ProfilePopup = ({ username, userProfile, setUserProfile, onClose,onLogout 
             }}
           />
         </label>
-        <div style={{display:"flex",flexDirection:"column"}}>
-            <button className="profile-save-btn" onClick={handleProfileUpdate}>Save Changes</button>
-            <button className="logout-button" onClick={onLogout}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <button className="profile-save-btn" onClick={handleProfileUpdate}>
+            Save Changes
+          </button>
+          <button className="logout-button" onClick={onLogout}>
             Logout
-            </button>
-       </div>
+          </button>
+        </div>
       </div>
     </div>
   );
