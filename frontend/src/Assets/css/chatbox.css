@@ -4,7 +4,7 @@
 .main-container {
   display: flex;
   height: 100vh;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   color: #ffffff;
   background-color: #2f3136;
 }
@@ -20,8 +20,6 @@
   border-right: 1px solid #2c2f33;
 }
 
-
-
 .search-bar input::placeholder {
   color: #b9bbbe;
 }
@@ -34,7 +32,7 @@
   border: 1px solid #2c2f33;
   border-radius: 5px;
   padding: 10px;
-  margin: -8px 4% 0 5%; 
+  margin: -8px 4% 0 5%;
 }
 
 .search-item {
@@ -120,7 +118,7 @@
   gap: 10px;
 }
 
-.user-info-ctn{
+.user-info-ctn {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -130,7 +128,7 @@
   transition: background-color 0.2s ease;
   margin-bottom: 5px;
 }
-.user-info{
+.user-info {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -141,15 +139,15 @@
   margin-bottom: 5px;
   flex: 1;
 }
-.user-name{
+.user-name {
   font-size: 16px;
   font-weight: bold;
-
 }
-.latest-message{
-  color: #b9bbbe;
-  font-size: 12px;
-
+.latest-message {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .typing-indicator {
   font-style: italic;
@@ -221,12 +219,12 @@
   border-bottom-left-radius: 0;
 }
 
-.message.sent .message-time{
+.message.sent .message-time {
   font-size: 10px;
   color: #dbdcde;
   margin-left: auto;
 }
-.message.received .message-time{
+.message.received .message-time {
   font-size: 10px;
   color: #dbdcde;
   margin-right: auto;
@@ -241,24 +239,24 @@
   display: grid;
   grid-template-columns: 1fr 10fr;
   padding: 10px;
-  }
- .search-bar{
+}
+.search-bar {
   padding: 10px;
   background-color: #202225;
   border-bottom: 1px solid #2c2f33;
   display: flex;
   align-items: center;
   justify-content: space-between;
- } 
-  .search-bar input {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px;
-    background-color: #4f545c;
-    color: #ffffff;
-  }
+}
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  background-color: #4f545c;
+  color: #ffffff;
+}
 
 .unread-badge {
   position: absolute;
@@ -316,7 +314,6 @@
   font-size: 1.5rem;
 }
 
-
 .profile-popup {
   position: fixed;
   top: 50%;
@@ -368,7 +365,7 @@
 .profile-popup button {
   margin: 10px 5px;
 }
-.profile-save-btn{
+.profile-save-btn {
   padding: 10px 20px;
   background-color: #5865f2;
   margin-top: 30px;
@@ -382,7 +379,7 @@
 .profile-save-btn:hover {
   background-color: #4752c4;
 }
-.close-profile{
+.close-profile {
   top: 10px;
   right: 10px;
   position: absolute;
@@ -391,20 +388,19 @@
   background-color: #d83c3e;
 }
 
-
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0); 
+  background-color: rgba(0, 0, 0, 0);
   transition: background-color 0.3s ease;
   display: none;
 }
 
 .overlay.active {
-  background-color: rgba(0, 0, 0, 0.5); 
+  background-color: rgba(0, 0, 0, 0.5);
   display: block;
 }
 
@@ -432,7 +428,6 @@
   background-color: #d83c3e;
 }
 
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .main-container {
@@ -448,22 +443,22 @@
     flex: none;
     height: 100%;
   }
-  .chat-input{
+  .chat-input {
     flex: none;
     height: auto;
   }
-  .message{
+  .message {
     max-width: 200px;
   }
-  .user-avatar-container{
+  .user-avatar-container {
     margin-left: 0px;
     margin-right: 0px;
   }
-  .user-info{
+  .user-info {
     margin-left: -30%;
   }
- .latest-message{
-  max-width: 150px;
+  .latest-message {
+    max-width: 150px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
