@@ -222,7 +222,7 @@
 
 /* Message Styling */
 .message {
-  max-width: 200px;
+  max-width: 250px;
   padding: 0 10px;
   border-radius: 18px;
   font-size: 14px;
@@ -291,6 +291,19 @@
   font-size: 10px;
   color: #dbdcde;
   margin-right: auto;
+}
+.message.sent .image-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 18px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+  color: #ffffff;
+  background-color: #5865f2;
+  align-self: flex-end;
+  border-bottom-right-radius: 0;
 }
 
 .user-avatar-container {

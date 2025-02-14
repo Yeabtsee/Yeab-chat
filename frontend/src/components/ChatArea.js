@@ -231,31 +231,31 @@ const ChatArea = ({
           } ${msg.imageUrl ? "image-message" : ""}`}
           style={{
             alignSelf: msg.sender === username ? "flex-end" : "flex-start",
-            backgroundColor: msg.imageUrl ? "transparent" : "",
+            padding: msg.imageUrl ? "0px 0 5px 0" : "",
             cursor: msg.imageUrl ? "pointer" : "",
           }}
         >
-          {/* Render text if available */}
-          {msg.text && (
-            <p className="message-text" style={{ margin: "8px 0 0 0" }}>
-              {msg.text}
-            </p>
-          )}
           {/* Render image if available */}
           {msg.imageUrl && (
             <img
               src={msg.imageUrl}
               alt="Sent content"
               style={{
-                minWidth: "160px",
-                maxWidth: "200px",
-                borderRadius: "8px",
-                marginTop: "5px",
+                width: "100%",
+                maxWidth: "300px",
+                borderTopLeftRadius: "10px",
+                borderTopRightRadius: "10px",
               }}
               onClick={() => setEnlargedImage(msg.imageUrl)}
             />
           )}
-          <span className="message-time">
+          {/* Render text if available */}
+          {msg.text && (
+            <p className="message-text" style={{ margin: "8px 0 0 5px" }}>
+              {msg.text}
+            </p>
+          )}
+          <span className="message-time" style={{ marginLeft: "5px" }}>
             {formatTimestamp(msg.timestamp)}
             {msg.sender === username && (
               <span
