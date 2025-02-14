@@ -205,21 +205,21 @@
   color: #b9bbbe;
 }
 
-.chat-input button {
+.chat-input .send-message {
   padding: 10px 20px;
-  background-color: #5865f2;
   border: none;
   border-radius: 5px;
-  color: #ffffff;
+  color: #5865f2;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 25px;
   transition: background-color 0.2s ease;
 }
-
-.chat-input button:hover {
-  background-color: #4752c4;
+.send-message:hover {
+  color: #8892f8 !important;
 }
-
+.image-upload:hover {
+  color: #8892f8 !important;
+}
 /* Message Styling */
 .message {
   max-width: 250px;

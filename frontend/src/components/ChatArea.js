@@ -455,19 +455,24 @@ const ChatArea = ({
           placeholder="Type your message..."
           disabled={!selectedUser}
         />
-        <button onClick={handleSendPrivateMessage} disabled={!selectedUser}>
+        <button
+          className="send-message"
+          style={{ backgroundColor: "transparent" }}
+          onClick={handleSendPrivateMessage}
+          disabled={!selectedUser}
+        >
           <FontAwesomeIcon icon={faPaperPlane} />
         </button>
         {/* Image selection button */}
         <button
           type="button"
+          className="image-upload"
           onClick={() => fileInputRef.current.click()}
           style={{
-            marginLeft: "10px",
             backgroundColor: "transparent",
             border: "none",
             cursor: "pointer",
-            fontSize: "20px",
+            fontSize: "30px",
             color: "#5865f2",
           }}
           disabled={!selectedUser}
