@@ -347,6 +347,15 @@ const ChatArea = ({
                 alt="User Avatar"
                 className="user-avatar"
                 style={{ backgroundColor: "transparent" }}
+                onClick={() =>
+                  setEnlargedImage(
+                    profiles.find(
+                      (profile) =>
+                        profile.username ===
+                        selectedUser.participants.find((p) => p !== username)
+                    )?.avatar
+                  )
+                }
               />
             ) : (
               <span className="user-avatar">
@@ -360,19 +369,7 @@ const ChatArea = ({
           <h3 style={{ marginLeft: "45%" }}>Select a user</h3>
         )}
       </div>
-      {selectedUser && (
-        <div
-          className="date-divider"
-          style={{
-            textAlign: "center",
-            margin: "10px 0",
-            fontSize: "12px",
-            color: "#b9bbbe",
-          }}
-        >
-          {new Date().toDateString()}
-        </div>
-      )}
+
       <div className="chat-messages">
         {messageElements}
         <div ref={chatEndRef} />
