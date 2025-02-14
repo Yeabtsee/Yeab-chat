@@ -2,6 +2,7 @@
   "dependencies": {
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
+    "file-saver": "^2.0.5",
     "nodemailer": "^6.10.0",
     "react-icons": "^5.4.0"
   }
