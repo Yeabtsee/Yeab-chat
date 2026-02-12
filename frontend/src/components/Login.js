@@ -44,7 +44,9 @@ const setTheme = (theme) => {
 
 const Login = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
-  const [isRegister, setIsRegister] = useState(false);
+  const query = new URLSearchParams(window.location.search);
+  const mode = query.get("mode");
+  const [isRegister, setIsRegister] = useState(mode === "register");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");

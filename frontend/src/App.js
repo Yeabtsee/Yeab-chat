@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import socket from "./socket";
 import Login from "./components/Login";
 import ChatBox from "./components/ChatBox";
+import LandingPage from "./components/LandingPage";
 import "./App.css";
 
 const App = () => {
@@ -45,17 +46,8 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Root route redirects to chat if logged in, or to login preserving query params */}
-        <Route
-          path="/"
-          element={
-            isLoggedIn ? (
-              <Navigate to="/chat" />
-            ) : (
-              <Navigate to={`/login${window.location.search}`} />
-            )
-          }
-        />
+        {/* Root route renders LandingPage */}
+        <Route path="/" element={<LandingPage />} />
 
         {/* Explicit login route */}
         <Route

@@ -36,7 +36,6 @@ const ProfilePopup = ({
     formData.append("avatar", file);
 
     console.log("Debug: Uploading avatar", file);
-    console.log("Debug: Form data", formData);
     try {
       const response = await fetch(
         `http://localhost:5000/api/users/${username}/upload-avatar`,
@@ -59,87 +58,89 @@ const ProfilePopup = ({
   };
 
   return (
-    <div className="profile-popup">
-      <div className="profile-content">
-        <button className="close-profile" onClick={onClose}>
-          &times;
-        </button>
-        <h2>User Profile</h2>
-        {userProfile.avatar ? (
-          <img
-            src={userProfile.avatar}
-            alt="Profile Avatar"
-            className="profile-avatar"
-          />
-        ) : (
-          <div
-            className="profile-avatar-letter"
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "50%",
-              border: "1px solid #fff",
-              backgroundColor: "rgb(61, 117, 239)",
-              color: "#fff",
-              textAlign: "center",
-              lineHeight: "50px",
-              fontSize: "1.5rem",
-            }}
-          >
-            {username?.charAt(0).toUpperCase()}
-          </div>
-        )}
-
-        <label>
-          Full Name:
-          <input
-            type="text"
-            value={userProfile.fullName}
-            onChange={(e) =>
-              setUserProfile({ ...userProfile, fullName: e.target.value })
-            }
-          />
-        </label>
-        <label>
-          Email:
-          <input
-            type="email"
-            value={userProfile.email}
-            onChange={(e) =>
-              setUserProfile({ ...userProfile, email: e.target.value })
-            }
-          />
-        </label>
-        <label>
-          Phone:
-          <input
-            type="text"
-            value={userProfile.phone}
-            onChange={(e) =>
-              setUserProfile({ ...userProfile, phone: e.target.value })
-            }
-          />
-        </label>
-        <label>
-          Change Profile Picture:
-          <input
-            type="file"
-            accept="image/*"
-            style={{ marginLeft: "10%", marginTop: "10px" }}
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) {
-                handleAvatarUpload(file); // Handle avatar upload
-              }
-            }}
-          />
-        </label>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <button className="profile-save-btn" onClick={handleProfileUpdate}>
-            Save Changes
+    <div className="profile-popup-overlay">
+      <div className="profile-popup">
+        <div className="profile-header">
+          <h2>Edit Profile</h2>
+          <button className="close-profile-btn" onClick={onClose}>
+            &times;
           </button>
-          <button className="logout-button" onClick={onLogout}>
+        </div>
+
+        <div className="profile-body">
+          <div className="profile-avatar-section">
+            <div className="avatar-wrapper">
+              {userProfile.avatar ? (
+                <img
+                  src={userProfile.avatar}
+                  alt="Profile"
+                  className="profile-avatar"
+                />
+              ) : (
+                <div className="profile-avatar-placeholder">
+                  {username?.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <label htmlFor="avatar-upload" className="avatar-upload-label">
+                <i className="fas fa-camera"></i>
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) handleAvatarUpload(file);
+                }}
+                hidden
+              />
+            </div>
+            <p className="username-display">@{username}</p>
+          </div>
+
+          <div className="profile-form">
+            <div className="form-group">
+              <label>Full Name</label>
+              <input
+                type="text"
+                value={userProfile.fullName}
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, fullName: e.target.value })
+                }
+                placeholder="Enter your full name"
+              />
+            </div>
+            <div className="form-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                value={userProfile.email}
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, email: e.target.value })
+                }
+                placeholder="name@example.com"
+              />
+            </div>
+            <div className="form-group">
+              <label>Phone Number</label>
+              <input
+                type="text"
+                value={userProfile.phone}
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, phone: e.target.value })
+                }
+                placeholder="+1 (555) 000-0000"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="profile-footer">
+          <button className="btn-secondary" onClick={onLogout}>
             Logout
+          </button>
+          <button className="btn-primary" onClick={handleProfileUpdate}>
+            Save Changes
           </button>
         </div>
       </div>
