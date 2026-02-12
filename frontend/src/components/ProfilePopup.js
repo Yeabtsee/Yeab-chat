@@ -1,4 +1,5 @@
 import React from "react";
+import API_URL from "../config";
 
 const ProfilePopup = ({
   username,
@@ -11,7 +12,7 @@ const ProfilePopup = ({
     console.log("Debug: updating profile", userProfile);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/users/${username}`,
+        `${API_URL}/api/users/${username}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -38,7 +39,7 @@ const ProfilePopup = ({
     console.log("Debug: Uploading avatar", file);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/users/${username}/upload-avatar`,
+        `${API_URL}/api/users/${username}/upload-avatar`,
         {
           method: "POST",
           body: formData,

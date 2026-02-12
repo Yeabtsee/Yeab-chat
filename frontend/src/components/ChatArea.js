@@ -7,6 +7,7 @@ import {
   faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 import { saveAs } from "file-saver";
+import API_URL from "../config";
 import socket from "../socket";
 
 const ChatArea = ({
@@ -55,7 +56,7 @@ const ChatArea = ({
         formData.append("image", imageFile);
 
         const uploadResponse = await fetch(
-          "http://localhost:5000/api/conversations/upload-image",
+          `${API_URL}/api/conversations/upload-image`,
           { method: "POST", body: formData }
         );
 
@@ -103,7 +104,7 @@ const ChatArea = ({
       });
 
       // Send the message data to your server
-      await fetch("http://localhost:5000/api/conversations", {
+      await fetch(`${API_URL}/api/conversations`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

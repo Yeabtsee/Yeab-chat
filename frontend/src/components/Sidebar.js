@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import socket from "../socket";
+import API_URL from "../config";
 
 const Sidebar = ({
   username,
@@ -77,7 +78,7 @@ const Sidebar = ({
       return;
     }
     try {
-      const response = await fetch(`http://localhost:5000/api/search/${query}`);
+      const response = await fetch(`${API_URL}/api/search/${query}`);
       const result = await response.json();
       setSearchResult(result);
     } catch (error) {
@@ -117,7 +118,7 @@ const Sidebar = ({
   const handleSearchedSelectUser = async (user) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/conversations/${username}/${user.username}`
+        `${API_URL}/api/conversations/${username}/${user.username}`
       );
       const conversation = await response.json();
       resetUnreadCount(user.username);

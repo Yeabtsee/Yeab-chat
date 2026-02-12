@@ -26,7 +26,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const mongoURI = "mongodb://localhost:27017/Users";
+const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/Users";
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
@@ -47,7 +47,7 @@ mongoose.connection.on("error", (err) => {
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000", // Your frontend URL
+    origin: process.env.CLIENT_URL || "http://localhost:3000", // Your frontend URL
     methods: ["GET", "POST"],
   },
 });

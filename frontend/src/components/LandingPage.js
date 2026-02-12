@@ -241,7 +241,7 @@ const LandingPage = () => {
       {/* Visual CTA Section */}
       <section className="py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-primary rounded-3xl p-8 lg:p-16 relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-12">
+          <div className="bg-primary/10 rounded-3xl p-8 lg:p-16 relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-12">
             {/* Decorative Circle */}
             <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
             <div className="max-w-xl text-center lg:text-left relative z-10">
